@@ -5,10 +5,10 @@ import { MerkleAirdrop } from "../../src/MerkleAirdrop.sol";
 import { BagelToken } from "../../src/BagelToken.sol";
 import { Test } from "forge-std/Test.sol";
 import { console } from "forge-std/console.sol";
-// import {DeployMerkleAirdrop} from "../../script/DeployMerkleAirdrop.s.sol";
-// import {ZkSyncChainChecker} from "foundry-devops/src/ZkSyncChainChecker.sol";
+import { DeployMerkleAirdrop } from "../../script/DeployMerkleAirdrop.s.sol";
+import { ZkSyncChainChecker } from "foundry-devops/src/ZkSyncChainChecker.sol";
 
-contract MerkleAirdropTest is Test {
+contract MerkleAirdropTest is ZkSyncChainChecker,Test {
     MerkleAirdrop airdrop;
     BagelToken token;
     address gasPayer;
@@ -24,10 +24,16 @@ contract MerkleAirdropTest is Test {
     bytes32[] proof = [proofOne, proofTwo];
 
     function setUp() public {
-        token = new BagelToken();
-        airdrop = new MerkleAirdrop(merkleRoot, token);
-        token.mint(token.owner(), amountToSend);
-        token.transfer(address(airdrop), amountToSend);
+        if (!isZkSyncChain()) {
+            DeployMerkleAirdrop deployer = new DeployMerkleAirdrop();
+            (airdrop, token) = deployer.deployMerkleAirdrop();
+        } else {
+            token = new BagelToken();
+            airdrop = new MerkleAirdrop(merkleRoot, token);
+            token.mint(token.owner(), amountToSend);
+            token.transfer(address(airdrop), amountToSend);
+        }
+        gasPayer = makeAddr("gasPayer");
         (user, userPrivKey) = makeAddrAndKey("user");
     }
 
