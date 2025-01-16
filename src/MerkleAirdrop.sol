@@ -21,6 +21,9 @@ contract MerkleAirdrop {
 
     event Claim(address account, uint256 amount);
 
+    /*//////////////////////////////////////////////////////////////
+                               FUNCTIONS
+    //////////////////////////////////////////////////////////////*/
     constructor(bytes32 merkleRoot, IERC20 airdropToken) {
         i_merkleRoot = merkleRoot;
         i_airdropToken = airdropToken;
@@ -39,5 +42,16 @@ contract MerkleAirdrop {
         s_hasClaimed[account] = true; // prevent users claiming more than once and draining the contract
         emit Claim(account, amount);
         i_airdropToken.safeTransfer(account, amount);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                             VIEW AND PURE
+    //////////////////////////////////////////////////////////////*/
+    function getMerkleRoot() external view returns (bytes32) {
+        return i_merkleRoot;
+    }
+
+    function getAirdropToken() external view returns (IERC20) {
+        return i_airdropToken;
     }
 }
