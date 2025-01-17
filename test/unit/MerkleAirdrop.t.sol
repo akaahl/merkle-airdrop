@@ -8,7 +8,7 @@ import { console } from "forge-std/console.sol";
 import { DeployMerkleAirdrop } from "../../script/DeployMerkleAirdrop.s.sol";
 import { ZkSyncChainChecker } from "foundry-devops/src/ZkSyncChainChecker.sol";
 
-contract MerkleAirdropTest is ZkSyncChainChecker,Test {
+contract MerkleAirdropTest is ZkSyncChainChecker, Test {
     MerkleAirdrop airdrop;
     BagelToken token;
     address gasPayer;
